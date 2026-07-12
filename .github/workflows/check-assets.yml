@@ -1,0 +1,26 @@
+name: Check assets (zero external hosts)
+
+# Enforces the FFC migration hard gate: every stylesheet, script, image, font,
+# and CSS url() must be served from this repository. Outbound <a> links and a
+# short allowlist of embed hosts (YouTube, Google Forms, etc.) are exempt.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Verify zero external asset hosts
+        run: python scripts/check_assets.py .
